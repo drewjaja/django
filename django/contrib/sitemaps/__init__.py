@@ -15,19 +15,19 @@ class SitemapNotFound(Exception):
     pass
 
 
-def ping_google(sitemap_url=None, ping_url=PING_URL):
+def ping_google(sitemap_url=None, protocol='http', ping_url=PING_URL):
     """
     Alert Google that the sitemap for the current site has been updated.
     If sitemap_url is provided, it should be an absolute path to the sitemap
     for this site -- e.g., '/sitemap.xml'. If sitemap_url is not provided, this
     function will attempt to deduce it by using urls.reverse().
     """
-    sitemap_full_url = _get_sitemap_full_url(sitemap_url)
+    sitemap_full_url = _get_sitemap_full_url(sitemap_url, protocol)
     params = urlencode({'sitemap': sitemap_full_url})
     urlopen('%s?%s' % (ping_url, params))
 
 
-def _get_sitemap_full_url(sitemap_url):
+def _get_sitemap_full_url(sitemap_url, protocol='http'):
     if not django_apps.is_installed('django.contrib.sites'):
         raise ImproperlyConfigured("ping_google requires django.contrib.sites, which isn't installed.")
 
@@ -47,7 +47,7 @@ def _get_sitemap_full_url(sitemap_url):
 
     Site = django_apps.get_model('sites.Site')
     current_site = Site.objects.get_current()
-    return 'http://%s%s' % (current_site.domain, sitemap_url)
+    return '%s://%s%s' % (protocol, current_site.domain, sitemap_url)
 
 
 class Sitemap:

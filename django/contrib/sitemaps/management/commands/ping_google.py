@@ -7,6 +7,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('sitemap_url', nargs='?', default=None)
+        parser.add_argument('protocol', nargs='?', default='http')
 
     def handle(self, *args, **options):
-        ping_google(sitemap_url=options['sitemap_url'])
+        ping_google(sitemap_url=options['sitemap_url'], protocol=options['protocol'])
